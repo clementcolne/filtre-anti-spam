@@ -24,6 +24,9 @@ public class Main {
 
         Dictionnaire dico = charger_dictionnaire();
 
+
+        Bayes bayes = new Bayes(dico);
+        bayes.apprentissage("baseapp/");
         Message mess = lire_message(dico);
 
         Tests tests = new Tests(dico, baseTestPath, nbHamTests, nbSpamTests);
@@ -35,9 +38,5 @@ public class Main {
 
     public static Dictionnaire charger_dictionnaire(){
         return new Dictionnaire("dictionnaire1000en.txt");
-    }
-
-    public static Message lire_message(Dictionnaire dico){
-        return new Message("0.txt", dico);
     }
 }

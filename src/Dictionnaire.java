@@ -81,9 +81,4 @@ public class Dictionnaire {
     public int tailleDictionnaire(){
         return contenu.length;
     }
-
-    public double[] updateOccu(Message message, double[] bj) {
-        
-        return new double[0];
-    }
 }
