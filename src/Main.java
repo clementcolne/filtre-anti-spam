@@ -24,11 +24,6 @@ public class Main {
 
         Dictionnaire dico = charger_dictionnaire();
 
-
-        Bayes bayes = new Bayes(dico);
-        bayes.apprentissage("baseapp/");
-        Message mess = lire_message(dico);
-
         Tests tests = new Tests(dico, baseTestPath, nbHamTests, nbSpamTests);
         // lancement des tests
         tests.run();

@@ -12,9 +12,16 @@ public class Tests {
         this.baseTestPath = baseTestPath;
     }
 
+    /**
+     * Lance les tests et fait les affichages
+     */
     public void run() {
         Message m;
         Bayes bayes = new Bayes(dico);
+        bayes.apprentissage("baseapp/");
+        double nbErreurHam = 0;
+        double nbErreurSpam = 0;
+
         System.out.println("Test :");
 
         // tests sur les spams
@@ -24,6 +31,7 @@ public class Tests {
                 System.out.println("SPAM numéro " + i + " identifié comme un SPAM");
             }else{
                 System.out.println("SPAM numéro " + i + " identifié comme un HAM *** erreur ***");
+                nbErreurSpam++;
             }
         }
 
@@ -34,10 +42,21 @@ public class Tests {
                 System.out.println("HAM numéro " + i + " identifié comme un HAM");
             }else{
                 System.out.println("HAM numéro " + i + " identifié comme un SPAM *** erreur ***");
+                nbErreurHam++;
             }
         }
 
-        System.out.println("Erreur de test sur les " + nbSpamTests + " SPAM : x%");
+        // calcul du taux d'erreur sur les spams
+        double tauxErreurSpam = (nbErreurSpam/nbSpamTests) * 100;
+        System.out.println("Erreur de test sur les " + nbSpamTests + " SPAM : " + tauxErreurSpam + " %");
+
+        // calcul du taux d'erreur sur les hams
+        double tauxErreurHam = (nbErreurHam/nbHamTests) * 100;
+        System.out.println("Erreur de test sur les " + nbHamTests + " HAM :  " + tauxErreurHam + " %");
+
+        // calcul du taux d'erreur global
+        double tauxErreurGlobal = (nbErreurSpam+nbErreurHam)/(nbHamTests+nbSpamTests) * 100;
+        System.out.println("Erreur de test globale sur " + (nbSpamTests+nbHamTests) + " : " + tauxErreurGlobal + " %");
     }
 
 }

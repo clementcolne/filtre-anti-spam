@@ -52,7 +52,6 @@ public class Message {
             System.err.println("Impossible de lire ou fermer le flux du fichier : " + emplacementMessage + ". Arret de la lecture.");
             e.printStackTrace();
         }
-        System.out.println(mots.length + " mots soutirés du message");
     }
 
     public int[] getVecteurDictionnaire() {
