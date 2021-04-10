@@ -18,16 +18,22 @@ public class Bayes {
         this.dico = dico;
     }
 
+    /**
+     * Apprends à partir du dossier en paramètre avec le nombre de messages en spam et ham
+     * @param emplacementDossier emplacement du dossier qui contient les spam et les ham
+     * @param nbMessagesSpam le nombre de messages en spam
+     * @param nbMessagesHam le nombre de messages en ham
+     */
     public void apprentissage(String emplacementDossier, int nbMessagesSpam, int nbMessagesHam){
 
-        // Lit les spam/ham dans baseapp (liste de Message)
+        // En cas d'oubli
         if(!emplacementDossier.equals("") && !emplacementDossier.endsWith("/")){
             emplacementDossier += "/";
         }
 
-        ArrayList<Message> messages = new ArrayList<>(nbMessagesSpam);
-        readMessages(true, emplacementDossier, nbMessagesSpam, messages);
-        readMessages(false, emplacementDossier, nbMessagesHam, messages);
+        // Lit les spam/ham dans baseapp (liste de Message)
+        readMessages(true, emplacementDossier, nbMessagesSpam); // On commence par les spam
+        readMessages(false, emplacementDossier, nbMessagesHam); // On enchaîne sur les ham
         pySpam = (double)nbMessagesSpam/(double)(nbMessagesHam+nbMessagesSpam);
     }
 
@@ -35,7 +41,13 @@ public class Bayes {
         apprentissage(emplacementDossier, 100, 100);
     }
 
-    private void readMessages(boolean spam,String emplacementDossier, int nbMessages, List<Message> listMessage){
+    /**
+     * Lis les messages comprit entre 0.txt et nbMessages.txt
+     * @param spam si c'est le dossier de spam ou pas
+     * @param emplacementDossier emplacement du dossier qui contient les dossier de ham et spam
+     * @param nbMessages le nombre de message à lire dans le dossier
+     */
+    private void readMessages(boolean spam,String emplacementDossier, int nbMessages){
         Message message;
 
         double[] bj = new double[dico.tailleDictionnaire()];
@@ -49,22 +61,21 @@ public class Bayes {
 
         int[] vecteur;
         for(int i = 0; i < nbMessages; i++){
-            //fichier = new File(emplacementDossier + i + ".txt");
-            message = new Message(emplacementDossierSpamHam + i + ".txt", dico);
-            listMessage.add(message);
+            message = new Message(emplacementDossierSpamHam + i + ".txt", dico); // On lit le message x.txt
 
-            vecteur = message.getVecteurDictionnaire();
+            vecteur = message.getVecteurDictionnaire(); // On récupère le vecteur du dictionnaire
 
             for (int j = 0; j < vecteur.length; j++) {
-                bj[j] += (vecteur[j]>0?1:0);
+                bj[j] += (vecteur[j]>0?1:0); // Si le vecteur est supérieur à 0 alors le mot apparait dans le message
             }
         }
-        // calcul de bjSpam
+
+        double epsi = 0.1;
+
+        // calcul de bj
         for (int i = 0; i < dico.tailleDictionnaire(); i++) {
-            if(bj[i]/(double)nbMessages > 1){
-                System.out.println(bj[i]);
-            }
-            bj[i] = bj[i]/(double)nbMessages;
+            bj[i] += epsi;
+            bj[i] = bj[i]/((double)nbMessages + 2*epsi); // On en réduit à des probabilités
         }
 
         if(spam){
@@ -74,12 +85,20 @@ public class Bayes {
         }
     }
 
+
+    /**
+     * Vérifie si le message est un spam avec le classifieur de Bayes
+     * @param message message à analyser
+     * @return si le message est un spam ou non
+     */
     public boolean isSpam(Message message){
         int[] vecteur = message.getVecteurDictionnaire();
         double spam = pySpam;
         double ham = 1 - pySpam;
+
+        // On parcourt le vecteur dictionnaire du message
         for (int i = 0; i < vecteur.length; i++) {
-            if(vecteur[i] > 0){
+            if(vecteur[i] > 0){ // S'il contient le mot alors on garde les proba normales sinon on prends les inverses
                 spam *= bjSpam[i];
                 ham *= bjHam[i];
             }else{
