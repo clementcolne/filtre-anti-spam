@@ -24,3 +24,7 @@ hs_err_pid*
 
 *.idea
 *.iml
+
+# fichiers du projet
+baseapp/
+basetest/

@@ -11,7 +11,6 @@ public class Message {
     public Message(String emplacementMessage, Dictionnaire dico) {
         mots = new String[0];
         lireMessage(emplacementMessage, dico);
-        System.out.println(Arrays.toString(mots));
     }
 
     /**
