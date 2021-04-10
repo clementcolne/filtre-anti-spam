@@ -24,9 +24,13 @@ public class Main {
 
         Dictionnaire dico = charger_dictionnaire();
 
+        // Apprentissage
+        Bayes bayes = new Bayes(dico);
+        bayes.apprentissage("baseapp/", mspam, mham);
+
         Tests tests = new Tests(dico, baseTestPath, nbHamTests, nbSpamTests);
         // lancement des tests
-        tests.run();
+        tests.run(bayes);
 
         //System.out.println(Arrays.toString(mess.getVecteurDictionnaire()));
     }

@@ -37,17 +37,13 @@ public class Bayes {
         pySpam = (double)nbMessagesSpam/(double)(nbMessagesHam+nbMessagesSpam);
     }
 
-    public void apprentissage(String emplacementDossier){
-        apprentissage(emplacementDossier, 100, 100);
-    }
-
     /**
      * Lis les messages comprit entre 0.txt et nbMessages.txt
      * @param spam si c'est le dossier de spam ou pas
      * @param emplacementDossier emplacement du dossier qui contient les dossier de ham et spam
      * @param nbMessages le nombre de message à lire dans le dossier
      */
-    private void readMessages(boolean spam,String emplacementDossier, int nbMessages){
+    private void readMessages(boolean spam, String emplacementDossier, int nbMessages){
         Message message;
 
         double[] bj = new double[dico.tailleDictionnaire()];

@@ -15,10 +15,8 @@ public class Tests {
     /**
      * Lance les tests et fait les affichages
      */
-    public void run() {
+    public void run(Bayes bayes) {
         Message m;
-        Bayes bayes = new Bayes(dico);
-        bayes.apprentissage("baseapp/");
         double nbErreurHam = 0;
         double nbErreurSpam = 0;
 
