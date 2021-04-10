@@ -25,7 +25,12 @@ public class Main {
         Dictionnaire dico = charger_dictionnaire();
 
         Message mess = lire_message(dico);
-        System.out.println(Arrays.toString(mess.getVecteurDictionnaire()));
+
+        Tests tests = new Tests(dico, baseTestPath, nbHamTests, nbSpamTests);
+        // lancement des tests
+        tests.run();
+
+        //System.out.println(Arrays.toString(mess.getVecteurDictionnaire()));
     }
 
     public static Dictionnaire charger_dictionnaire(){
