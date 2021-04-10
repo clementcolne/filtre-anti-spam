@@ -59,7 +59,7 @@ public class Dictionnaire {
             // On lit ligne par ligne
             while((ligne = bufferedReader.readLine()) != null){
                 ligne = ligne.trim(); // On trim la ligne
-                if(!ligne.equals("")){ // On sait jamais (pas d'espace vide dans le dictionnaire)
+                if(!ligne.equals("") && ligne.length() > 2){ // On sait jamais (pas d'espace vide dans le dictionnaire)
                     dictionnaire.add(ligne);
                 }
             }
@@ -76,5 +76,14 @@ public class Dictionnaire {
             e.printStackTrace();
         }
         System.out.println("Lecture du dictionnaire terminée");
+    }
+
+    public int tailleDictionnaire(){
+        return contenu.length;
+    }
+
+    public double[] updateOccu(Message message, double[] bj) {
+        
+        return new double[0];
     }
 }
