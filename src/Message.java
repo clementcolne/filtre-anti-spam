@@ -29,10 +29,10 @@ public class Message {
             // On lit ligne par ligne
             while((ligne = bufferedReader.readLine()) != null){
                 ligne = ligne.trim();
-                contenuLigne = ligne.split("[.:;, |{}\"')(?<>/*0-9-@+$#\\[\\]_-]"); // On sépare la ligne des différents caractères non voulus présents dans le message
+                contenuLigne = ligne.split("[.:;, |{}\"')(?<>/*0-9-@+$#\\[\\]_=`~!-]"); // On sépare la ligne des différents caractères non voulus présents dans le message
                 for (String mot: contenuLigne) { // Pour chaque mot de la ligne
                     mot = mot.trim();
-                    if(!mot.equals("")){ // Il y a beaucoup de mots vides à cause du split et on en a pas besoin
+                    if(!mot.equals("") && mot.length() > 2){ // Il y a beaucoup de mots vides à cause du split et on en a pas besoin
                         arrayLMots.add(mot);
                     }
                 }

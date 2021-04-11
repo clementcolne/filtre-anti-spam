@@ -60,9 +60,10 @@ public class Bayes {
             message = new Message(emplacementDossierSpamHam + i + ".txt", dico); // On lit le message x.txt
 
             vecteur = message.getVecteurDictionnaire(); // On récupère le vecteur du dictionnaire
-
-            for (int j = 0; j < vecteur.length; j++) {
-                bj[j] += (vecteur[j]>0?1:0); // Si le vecteur est supérieur à 0 alors le mot apparait dans le message
+            if(vecteur != null){
+                for (int j = 0; j < vecteur.length; j++) {
+                    bj[j] += (vecteur[j]>0?1:0); // Si le vecteur est supérieur à 0 alors le mot apparait dans le message
+                }
             }
         }
 
@@ -89,19 +90,22 @@ public class Bayes {
      */
     public boolean isSpam(Message message){
         int[] vecteur = message.getVecteurDictionnaire();
-        double spam = pySpam;
-        double ham = 1 - pySpam;
+        if(vecteur != null){
+            double spam = pySpam;
+            double ham = 1 - pySpam;
 
-        // On parcourt le vecteur dictionnaire du message
-        for (int i = 0; i < vecteur.length; i++) {
-            if(vecteur[i] > 0){ // S'il contient le mot alors on garde les proba normales sinon on prends les inverses
-                spam *= bjSpam[i];
-                ham *= bjHam[i];
-            }else{
-                spam *= 1-bjSpam[i];
-                ham *= 1-bjHam[i];
+            // On parcourt le vecteur dictionnaire du message
+            for (int i = 0; i < vecteur.length; i++) {
+                if(vecteur[i] > 0){ // S'il contient le mot alors on garde les proba normales sinon on prends les inverses
+                    spam *= bjSpam[i];
+                    ham *= bjHam[i];
+                }else{
+                    spam *= 1-bjSpam[i];
+                    ham *= 1-bjHam[i];
+                }
             }
+            return spam > ham;
         }
-        return spam > ham;
+        return pySpam > 0.5;
     }
 }
