@@ -47,6 +47,15 @@ public class Main {
                 // lancement des tests
                 tests.run(bayes);
                 break;
+            case "-n":
+                if(args.length != 4) {
+                    erreur();
+                }
+                // On souhaite ajouter un nouveau message au classifieur connu
+                cheminSauvegardeClassifieur = args[1];
+                message = args[2];
+                String type = args[3];
+                break;
             default:
                 // erreur, les arguments spécifiés sont incorrects
                 erreur();
