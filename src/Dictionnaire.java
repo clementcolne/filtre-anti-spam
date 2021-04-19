@@ -15,29 +15,29 @@ public class Dictionnaire {
      * @param mots la liste des mots du message
      * @return le vecteur des mots présents ou non
      */
-    public int[] compareMessageDico(String[] mots){
+    public int[] compareMessageDico(List<String> mots){
         int indiceMots;
         int indiceDico;
         int lastIndiceDico = 0; // Vu que les deux tableaux sont triés, on a plus besoin de passer sur les éléments du dictionnaire déjà vu
         int[] vecteurMots = new int[contenu.length];
         String mot;
-        for(indiceMots = 0; indiceMots < mots.length;){ // On parcours la liste des mots (la gestion de l'indice intervient plus tard
+        for(indiceMots = 0; indiceMots < mots.size();){ // On parcours la liste des mots (la gestion de l'indice intervient plus tard
             indiceDico = lastIndiceDico;
-            while(indiceDico < contenu.length && !contenu[indiceDico].equalsIgnoreCase(mots[indiceMots])){ // On parcourt le dictionnaire
+            while(indiceDico < contenu.length && !contenu[indiceDico].equalsIgnoreCase(mots.get(indiceMots))){ // On parcourt le dictionnaire
                 indiceDico++;
             }
             if(indiceDico >= contenu.length){ // Si on a pas trouvé de mot dans le dico
-                mot = mots[indiceMots]; // On récpère le mot actuel
+                mot = mots.get(indiceMots); // On récpère le mot actuel
                 do{ // On passe au prochain indice pour voir si le mot apparait plusieurs fois
                     indiceMots++;
-                }while(indiceMots < mots.length &&mot.equalsIgnoreCase(mots[indiceMots]));
+                }while(indiceMots < mots.size() && mot.equalsIgnoreCase(mots.get(indiceMots)));
             }else{
                 lastIndiceDico = indiceDico;
                 mot = contenu[indiceDico]; // On récpère le mot du dico
                 do{ // On passe au prochain indice pour voir si le mot apparait plusieurs fois (et on compte)
                     indiceMots++;
                     vecteurMots[indiceDico]++;
-                }while(indiceMots < mots.length && mot.equalsIgnoreCase(mots[indiceMots]));
+                }while(indiceMots < mots.size() && mot.equalsIgnoreCase(mots.get(indiceMots)));
             }
         }
         return vecteurMots;

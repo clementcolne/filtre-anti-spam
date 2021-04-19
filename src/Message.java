@@ -1,16 +1,19 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class Message {
 
-    private String[] mots;
+    private List<String> mots;
     private int[] vecteurDictionnaire;
 
 
     public Message(String emplacementMessage, Dictionnaire dico) {
-        mots = new String[0];
+        mots = new ArrayList<>(1000);
         lireMessage(emplacementMessage, dico);
+        vecteurDictionnaire = dico.compareMessageDico(this.mots); // On récupère le vecteur de la présence ou non des mots du dictionnaire
     }
 
     /**
@@ -19,12 +22,12 @@ public class Message {
      * @param dico Dictionnaire généré juste avant
      */
     private void lireMessage(String emplacementMessage, Dictionnaire dico) {
-        ArrayList<String> arrayLMots = new ArrayList<>(1000);
         File f = new File(emplacementMessage);
         String ligne;
         String[] contenuLigne;
+        BufferedReader bufferedReader;
         try {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
+            bufferedReader = new BufferedReader(new FileReader(f));
 
             // On lit ligne par ligne
             while((ligne = bufferedReader.readLine()) != null){
@@ -33,25 +36,19 @@ public class Message {
                 for (String mot: contenuLigne) { // Pour chaque mot de la ligne
                     mot = mot.trim();
                     if(!mot.equals("") && mot.length() > 2){ // Il y a beaucoup de mots vides à cause du split et on en a pas besoin
-                        arrayLMots.add(mot);
+                        mots.add(mot);
                     }
                 }
             }
-
-            TraitementString.sort(arrayLMots); // On trie pour les optis
-
-            this.mots = arrayLMots.toArray(this.mots); // Transformation de l'arraylist en talbeau statique
-
-            vecteurDictionnaire = dico.compareMessageDico(this.mots); // On récupère le vecteur de la présence ou non des mots du dictionnaire
-
             bufferedReader.close();
         } catch (FileNotFoundException e) {
-            System.err.println("Impossible de lire le fichier de message : " + emplacementMessage + ", message introuvable");
-            e.printStackTrace();
+            System.err.println("Impossible de lire le fichier : " + emplacementMessage + ", fichier introuvable");
+            return;
         } catch (IOException e) {
             System.err.println("Impossible de lire ou fermer le flux du fichier : " + emplacementMessage + ". Arret de la lecture.");
-            e.printStackTrace();
+            return;
         }
+        TraitementString.sort(mots); // On trie pour les optis
     }
 
     public int[] getVecteurDictionnaire() {

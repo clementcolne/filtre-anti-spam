@@ -1,22 +1,87 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.Arrays;
-import java.util.List;
 
-public class Bayes {
+public class Bayes implements Serializable {
 
-    private double[] bjSpam;
-    private double[] bjHam;
-    double pySpam;
+    private int[] bjSpam;
+    private int[] bjHam;
+    private double pySpam;
     private Dictionnaire dico;
+    private double pSpam = 0.0;
+    private double pHam = 0.0;
+    private int nbMessagesSpam = 0;
+    private int nbMessagesHam = 0;
+    private double epsi = 0.1;
 
     public Bayes(Dictionnaire dico) {
-        bjSpam = new double[dico.tailleDictionnaire()];
-        bjHam = new double[dico.tailleDictionnaire()];
+        bjSpam = new int[dico.tailleDictionnaire()];
+        bjHam = new int[dico.tailleDictionnaire()];
         this.dico = dico;
     }
+
+    public Bayes(String emplacementFichier, Dictionnaire dico){
+        this.dico = dico;
+        bjSpam = new int[dico.tailleDictionnaire()];
+        bjHam = new int[dico.tailleDictionnaire()];
+        File f = new File(emplacementFichier);
+        String mot;
+        String[] contenuLignebjSpam;
+        String[] contenuLignebjHam;
+        BufferedReader bufferedReader;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(f));
+
+            // On lit les deux premières lignes qui sont les occurences des mots en spam et ham respectivement
+            contenuLignebjSpam = bufferedReader.readLine().trim().split("[ ]"); // On sépare la ligne des différents caractères non voulus présents dans le message
+            contenuLignebjHam = bufferedReader.readLine().trim().split("[ ]");
+            for (int i = 0; i < contenuLignebjSpam.length && i < bjSpam.length; i++) { // Pour chaque mot de la ligne
+                mot = contenuLignebjSpam[i].trim();
+                bjSpam[i] = Integer.parseInt(mot);
+                mot = contenuLignebjHam[i].trim();
+                bjHam[i] = Integer.parseInt(mot);
+            }
+
+            // Les deux lignes sont les nombre de messages en spam et en ham respectivement
+            mot = bufferedReader.readLine().trim();
+            nbMessagesSpam = Integer.parseInt(mot);
+            mot = bufferedReader.readLine().trim();
+            nbMessagesHam = Integer.parseInt(mot);
+
+            bufferedReader.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("Impossible d'écrire sur le fichier : " + emplacementFichier + ", fichier introuvable");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Impossible de écrire ou fermer le flux du fichier : " + emplacementFichier + ". Arret de l'écriture.");
+            e.printStackTrace();
+        }
+    }
+
+    public void sauvegarde(String emplacementFichier){
+        File f = new File(emplacementFichier);
+        BufferedWriter bufferedWriter;
+        try {
+            bufferedWriter = new BufferedWriter(new FileWriter(f));
+
+            for(Integer d : bjSpam){
+                bufferedWriter.write(d.toString() + " ");
+            }
+            bufferedWriter.newLine();
+            for(Integer d : bjHam){
+                bufferedWriter.write(d.toString() + " ");
+            }
+
+            bufferedWriter.newLine();
+            bufferedWriter.write(Integer.toString(nbMessagesSpam));
+            bufferedWriter.newLine();
+            bufferedWriter.write(Integer.toString(nbMessagesHam));
+
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Apprends à partir du dossier en paramètre avec le nombre de messages en spam et ham
@@ -25,6 +90,9 @@ public class Bayes {
      * @param nbMessagesHam le nombre de messages en ham
      */
     public void apprentissage(String emplacementDossier, int nbMessagesSpam, int nbMessagesHam){
+
+        this.nbMessagesSpam = nbMessagesSpam;
+        this.nbMessagesHam = nbMessagesHam;
 
         // En cas d'oubli
         if(!emplacementDossier.equals("") && !emplacementDossier.endsWith("/")){
@@ -35,6 +103,7 @@ public class Bayes {
         readMessages(true, emplacementDossier, nbMessagesSpam); // On commence par les spam
         readMessages(false, emplacementDossier, nbMessagesHam); // On enchaîne sur les ham
         pySpam = (double)nbMessagesSpam/(double)(nbMessagesHam+nbMessagesSpam);
+        sauvegarde("mon_classifieur");
     }
 
     /**
@@ -46,7 +115,7 @@ public class Bayes {
     private void readMessages(boolean spam, String emplacementDossier, int nbMessages){
         Message message;
 
-        double[] bj = new double[dico.tailleDictionnaire()];
+        int[] bj = new int[dico.tailleDictionnaire()];
 
         String emplacementDossierSpamHam;
         if(spam){
@@ -67,13 +136,11 @@ public class Bayes {
             }
         }
 
-        double epsi = 0.1;
 
         // calcul de bj
-        for (int i = 0; i < dico.tailleDictionnaire(); i++) {
-            bj[i] += epsi;
-            bj[i] = bj[i]/((double)nbMessages + 2*epsi); // On en réduit à des probabilités
-        }
+       /* for (int i = 0; i < dico.tailleDictionnaire(); i++) {
+            bj[i] = ; // On en réduit à des probabilités
+        }*/
 
         if(spam){
             bjSpam = Arrays.copyOf(bj, bj.length);
@@ -82,7 +149,6 @@ public class Bayes {
         }
     }
 
-
     /**
      * Vérifie si le message est un spam avec le classifieur de Bayes
      * @param message message à analyser
@@ -90,22 +156,33 @@ public class Bayes {
      */
     public boolean isSpam(Message message){
         int[] vecteur = message.getVecteurDictionnaire();
+        double pSpamMot;
+        double pHamMot;
         if(vecteur != null){
-            double spam = pySpam;
-            double ham = 1 - pySpam;
+            pSpam = pySpam;
+            pHam = 1 - pySpam;
 
             // On parcourt le vecteur dictionnaire du message
             for (int i = 0; i < vecteur.length; i++) {
+                pSpamMot = (epsi + (double)bjSpam[i])/((double)nbMessagesSpam + 2*epsi);
+                pHamMot = (epsi + (double)bjHam[i])/((double)nbMessagesHam + 2*epsi);
                 if(vecteur[i] > 0){ // S'il contient le mot alors on garde les proba normales sinon on prends les inverses
-                    spam *= bjSpam[i];
-                    ham *= bjHam[i];
+                    pSpam *= pSpamMot;
+                    pHam *= pHamMot;
                 }else{
-                    spam *= 1-bjSpam[i];
-                    ham *= 1-bjHam[i];
+                    pSpam *= 1-pSpamMot;
+                    pHam *= 1-pHamMot;
                 }
             }
-            return spam > ham;
+            return pSpam > pHam;
         }
         return pySpam > 0.5;
+    }
+
+    public double getpSpam() {
+        return pSpam;
+    }
+    public double getpHam() {
+        return pHam;
     }
 }
