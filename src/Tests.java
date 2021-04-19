@@ -25,10 +25,11 @@ public class Tests {
         // tests sur les spams
         for(int i = 0 ; i < nbSpamTests ; i++) {
             m = new Message(baseTestPath + "/spam/" + i + ".txt", dico);
+            System.out.println("SPAM numéro " + i + " : P(Y=SPAM | X=x) = " + bayes.getpSpam() + ", P(Y=HAM | X=x) = "+ bayes.getpHam());
             if(bayes.isSpam(m)) {
-                System.out.println("SPAM numéro " + i + " identifié comme un SPAM");
+                System.out.println("\t\t\t\t=> identifié comme un SPAM\n");
             }else{
-                System.out.println("SPAM numéro " + i + " identifié comme un HAM *** erreur ***");
+                System.out.println("\t\t\t\t=> identifié comme un HAM *** erreur ***\n");
                 nbErreurSpam++;
             }
         }
@@ -36,10 +37,11 @@ public class Tests {
         // tests sur les hams
         for(int i = 0 ; i < nbHamTests ; i++) {
             m = new Message(baseTestPath + "/ham/" + i + ".txt", dico);
+            System.out.println("HAM numéro " + i + " : P(Y=SPAM | X=x) = " + bayes.getpSpam() + ", P(Y=HAM | X=x) = "+ bayes.getpHam());
             if(!bayes.isSpam(m)) {
-                System.out.println("HAM numéro " + i + " identifié comme un HAM");
+                System.out.println("\t\t\t\t=> identifié comme un HAM\n");
             }else{
-                System.out.println("HAM numéro " + i + " identifié comme un SPAM *** erreur ***");
+                System.out.println("\t\t\t\t=> identifié comme un SPAM *** erreur ***\n");
                 nbErreurHam++;
             }
         }

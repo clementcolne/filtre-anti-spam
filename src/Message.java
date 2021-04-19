@@ -10,6 +10,11 @@ public class Message {
     private int[] vecteurDictionnaire;
 
 
+    /**
+     * Lis le message et compare avec le dictionnaire
+     * @param emplacementMessage emplacement du message
+     * @param dico Le dictionnaire où l'on compare le message
+     */
     public Message(String emplacementMessage, Dictionnaire dico) {
         mots = new ArrayList<>(1000);
         lireMessage(emplacementMessage, dico);
@@ -53,5 +58,13 @@ public class Message {
 
     public int[] getVecteurDictionnaire() {
         return vecteurDictionnaire;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "mots=" + mots +
+                ", vecteurDictionnaire=" + Arrays.toString(vecteurDictionnaire) +
+                '}';
     }
 }
