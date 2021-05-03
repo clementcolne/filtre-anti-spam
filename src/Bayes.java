@@ -193,7 +193,7 @@ public class Bayes implements Serializable {
                 }
             }
 
-            return pSpam > pHam;
+            return Math.log(pSpam) > Math.log(pHam);
         }
         return pySpam > 0.5;
     }
