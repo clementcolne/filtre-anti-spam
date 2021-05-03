@@ -11,7 +11,7 @@ public class Bayes implements Serializable {
     private double pHam = 0.0;
     private int nbMessagesSpam = 0;
     private int nbMessagesHam = 0;
-    private double epsi = 0.1;
+    private double epsi = 1;
 
     public Bayes(Dictionnaire dico) {
         bjSpam = new int[dico.tailleDictionnaire()];
