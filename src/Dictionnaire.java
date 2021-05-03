@@ -70,10 +70,10 @@ public class Dictionnaire {
             bufferedReader.close();
         } catch (FileNotFoundException e) {
             System.err.println("Impossible de lire le fichier de dictionnaire, dictionnaire introuvable");
-            e.printStackTrace();
+            System.exit(1);
         } catch (IOException e) {
             System.err.println("Impossible de lire ou fermer le flux du fichier. Arret de la lecture.");
-            e.printStackTrace();
+            System.exit(1);
         }
         System.out.println("Lecture du dictionnaire terminée");
     }

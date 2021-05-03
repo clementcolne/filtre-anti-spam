@@ -48,11 +48,11 @@ public class Message {
             bufferedReader.close();
         } catch (FileNotFoundException e) {
             System.err.println("Impossible de lire le fichier : " + emplacementMessage + ", fichier introuvable");
-            System.exit(0);
+            System.exit(1);
             return;
         } catch (IOException e) {
             System.err.println("Impossible de lire ou fermer le flux du fichier : " + emplacementMessage + ". Arret de la lecture.");
-            System.exit(0);
+            System.exit(1);
             return;
         }
         TraitementString.sort(mots); // On trie pour les optis
